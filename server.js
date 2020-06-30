@@ -1,22 +1,35 @@
 const express = require('express')
-
+const http = require('http');
 const app = express();
 
-
 let surveyModule = require("./serverModuleSurvey.js")
-
+const dbName = "survey";
 var MongoClient = require('mongodb').MongoClient;
-MongoClient.connect('mongodb://127.0.0.1:27017/clinfhir', function(err, ldb) {
-    if(err) {
+MongoClient.connect('mongodb://127.0.0.1:27017', {useUnifiedTopology: true},function(err, client) {
+    if (err) {
         //throw err;
         console.log('>>> Mongo server not running')
     } else {
-        db = ldb;
-        //  orionModule.setup(app,db);
-        smartModule.setup(app,db);
+        console.log('Db connect OK')
+        const db = client.db(dbName);
+
+
         surveyModule.setup(app,db);
+        //client.close();
+
     }
 });
+
+console.log('xx')
+let port = 8080
+let server = http.createServer(app).listen(port);
+
+
+app.use('/', express.static(__dirname,{index:'/survey.html'}));
+
+
+console.log('server listening on port ' + port)
+
 /*
 
 //enable SSL - https://aghassi.github.io/ssl-using-express-4/

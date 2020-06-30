@@ -3,10 +3,15 @@ function setup(app,db) {
 
     app.get('/survey/results',function(req,res) {
 
+        //var survey = db.collection('survey');
+        console.log("survey")
+
         let query = {};
+
         db.collection("survey").find({$query: query}).toArray(function (err, doc) {
             if (err) {
                 res.status(500);
+                console.log(err)
                 res.json({err: err});
             } else {
                let summary = {};
@@ -36,9 +41,6 @@ function setup(app,db) {
 
                 res.json(rtn)
             }
-
-
-
         })
     })
 

@@ -5,7 +5,7 @@ angular.module("sampleApp")
             $scope.input = {deployType:{}, notes:{}}
             $scope.lst = []
 
-            $http.get('artifacts/allResources.json').then(
+            $http.get('./allResources.json').then(
                 function(data) {
                     //console.log(data.data);
                     $scope.allResources = data.data
@@ -73,7 +73,6 @@ angular.module("sampleApp")
 
 
             $scope.submit = function() {
-
 
                 var modalOptions = {
                     closeButtonText: "No, I'm not finished",
