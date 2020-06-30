@@ -2,6 +2,7 @@
 /*
 * certbot keys at /etc/letsencrypt/live/survey.clinfhir.com/fullchain.pem
 * keyfile /etc/letsencrypt/live/survey.clinfhir.com/privkey.pem
+* "certbot renew" to renew keys (2020-09-28)
 * */
 
 const express = require('express')
@@ -31,7 +32,6 @@ try {
 } catch (ex) {
     console.log("SSL not enabled")
 }
-
 
 let surveyModule = require("./serverModuleSurvey.js")
 const dbName = "survey";
