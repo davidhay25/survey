@@ -61,14 +61,27 @@
                         <input type="text" class="form-control" ng-model="input.name" placeholder="My Name"/>
                     </div>
                     <div class="col-md-3">
-                        <input type="text" class="form-control" ng-model="input.contact" placeholder="Email (optional)"/>
+                        <input type="text" class="form-control" ng-model="input.contact" placeholder="Email (supply if OK to contact you)"/>
                     </div>
+                    <div class="col-md-2">
+
+                        <div class="btn-group">
+                            <label class="btn btn-default" ng-model="input.fhirVersion" uib-btn-radio="'R4'">R4</label>
+                            <label class="btn btn-default" ng-model="input.fhirVersion" uib-btn-radio="'R3'">STU 3</label>
+                            <label class="btn btn-default" ng-model="input.fhirVersion" uib-btn-radio="'R2'">DSTU 2</label>
+                        </div>
+
+
+
+                    </div>
+
                     <div class="col-md-3">
                         <checkbox ng-model="input.selectedOnly"
+                                  style="margin-top: 8px"
                                   ng-click="selectedOnly(! input.selectedOnly)"></checkbox>
-                        Only show selected resource types
+                        <span style="margin-top: 12px">Only show selected resource types</span>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-1">
                         <button class="btn btn-primary pull-right" ng-click="submit()">Submit</button>
                     </div>
                 </div>
@@ -147,7 +160,7 @@
             </div>
 
         </uib-tab>
-        <uib-tab heading="Result so far...">
+        <uib-tab heading="Results so far...">
 
             <div class="rounded-box-filled">
                 <div class="row">

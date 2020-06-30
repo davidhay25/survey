@@ -30,8 +30,16 @@ try {
     });
 
 } catch (ex) {
-    console.log("SSL not enabled")
+    console.log("SSL not enabled, starting HTTP server (temp for developing)")
+
+    let port = 8080
+    let server = http.createServer(app).listen(port);
+    console.log('server listening on port ' + port)
+
 }
+
+app.use('/', express.static(__dirname,{index:'/survey.html'}));
+
 
 let surveyModule = require("./serverModuleSurvey.js")
 const dbName = "survey";
@@ -53,14 +61,13 @@ MongoClient.connect('mongodb://127.0.0.1:27017', {useUnifiedTopology: true},func
 
 console.log('xx')
 
-let port = 8080
-let server = http.createServer(app).listen(port);
 
 
-app.use('/', express.static(__dirname,{index:'/survey.html'}));
 
 
-console.log('server listening on port ' + port)
+
+
+
 
 /*
 

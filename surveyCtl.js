@@ -3,6 +3,7 @@ angular.module("sampleApp")
     .controller('surveyCtrl',
         function ($scope,$http,modalService) {
             $scope.input = {deployType:{}, notes:{}}
+            $scope.input.fhirVersion = "R4"
             $scope.lst = []
 
             $http.get('./allResources.json').then(
@@ -87,7 +88,8 @@ angular.module("sampleApp")
                     $scope.allResources.forEach(function (item) {
                         var name = item.name;
                         if ($scope.input.selected[name]) {
-                            let resource = {name:name,deployType : $scope.input.deployType[name], notes: $scope.input.notes[name]}
+                            let resource = {name:name,deployType : $scope.input.deployType[name], notes: $scope.input.notes[name]};
+                            resource.fhirVersion = $scope.input.fhirVersion;
                             result.resources.push(resource)
                         }
 
