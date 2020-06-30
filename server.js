@@ -1,6 +1,37 @@
+
+/*
+* certbot keys at /etc/letsencrypt/live/survey.clinfhir.com/fullchain.pem
+* keyfile /etc/letsencrypt/live/survey.clinfhir.com/privkey.pem
+* */
+
 const express = require('express')
 const http = require('http');
+const https = require('https');
+
 const app = express();
+const fs = require('fs');
+
+try {
+    // Certificate - https://itnext.io/node-express-letsencrypt-generate-a-free-ssl-certificate-and-run-an-https-server-in-5-minutes-a730fbe528ca
+    const privateKey = fs.readFileSync('/etc/letsencrypt/live/survey.clinfhir.com/privkey.pem', 'utf8');
+    const certificate = fs.readFileSync('/etc/letsencrypt/live/survey.clinfhir.com/cert.pem', 'utf8');
+    const ca = fs.readFileSync('/etc/letsencrypt/live/survey.clinfhir.com/chain.pem', 'utf8');
+
+    const credentials = {
+        key: privateKey,
+        cert: certificate,
+        ca: ca
+    };
+
+    const httpsServer = https.createServer(credentials, app);
+    httpsServer.listen(443, () => {
+        console.log('HTTPS Server running on port 443');
+    });
+
+} catch (ex) {
+    console.log("SSL not enabled")
+}
+
 
 let surveyModule = require("./serverModuleSurvey.js")
 const dbName = "survey";
@@ -21,6 +52,7 @@ MongoClient.connect('mongodb://127.0.0.1:27017', {useUnifiedTopology: true},func
 });
 
 console.log('xx')
+
 let port = 8080
 let server = http.createServer(app).listen(port);
 
