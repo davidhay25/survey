@@ -59,6 +59,7 @@ app.get('/proxy/:query',function(req,res) {
 
         res.statusCode = response.statusCode;
         res.setHeader('Content-Type', 'application/fhir+json')
+        res.setHeader('Access-Control-Allow-Origin',"*");
 
         res.send(body)
 
