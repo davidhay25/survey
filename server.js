@@ -12,6 +12,9 @@ const https = require('https');
 const app = express();
 const fs = require('fs');
 
+let request = require('request');
+
+
 try {
     // Certificate - https://itnext.io/node-express-letsencrypt-generate-a-free-ssl-certificate-and-run-an-https-server-in-5-minutes-a730fbe528ca
     const privateKey = fs.readFileSync('/etc/letsencrypt/live/survey.clinfhir.com/privkey.pem', 'utf8');
@@ -39,6 +42,32 @@ try {
 }
 
 app.use('/', express.static(__dirname,{index:'/survey.html'}));
+
+
+
+//--- ssl proxy
+
+app.get('/proxy/:query',function(req,res) {
+    let host = "http://home.clinfhir.com:8054/baseR4/";
+    let qry = req.url.substr(7)
+
+    let url = host + qry
+    console.log(url)
+
+
+    request(url, function (error, response, body) {
+
+        res.statusCode = response.statusCode;
+        res.setHeader('Content-Type', 'application/fhir+json')
+
+        res.send(body)
+
+
+    });
+
+
+
+})
 
 
 let surveyModule = require("./serverModuleSurvey.js")

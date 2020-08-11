@@ -84,12 +84,12 @@ angular.module("sampleApp")
 
                 modalService.showModal({}, modalOptions).then(function () {
                     let result = {name:$scope.input.name,contact : $scope.input.contact,resources:[]}
-
+                    result.fhirVersion = $scope.input.fhirVersion;
                     $scope.allResources.forEach(function (item) {
                         var name = item.name;
                         if ($scope.input.selected[name]) {
                             let resource = {name:name,deployType : $scope.input.deployType[name], notes: $scope.input.notes[name]};
-                            resource.fhirVersion = $scope.input.fhirVersion;
+
                             result.resources.push(resource)
                         }
 
