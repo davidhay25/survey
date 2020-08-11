@@ -32,8 +32,18 @@ function setup(app) {
             let options = {method:'POST',body:body};
             executeQuery(req.url,res,options)
         })
+    })
 
+    app.patch('/proxy/*',function(req,res) {
+        var body = '';
+        req.on('data', function (data) {
+            body += data;
+        });
 
+        req.on('end', function () {
+            let options = {method:'PATCH',body:body};
+            executeQuery(req.url,res,options)
+        })
     })
 }
 
