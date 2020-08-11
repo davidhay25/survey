@@ -42,6 +42,7 @@ function setup(app) {
 
         req.on('end', function () {
             let options = {method:'PATCH',body:body};
+            options.headers = {'content-type':'application/json-patch+json'}
             executeQuery(req.url,res,options)
         })
     })
@@ -52,13 +53,18 @@ function executeQuery(inUrl,res,options) {
     let qry = inUrl.substr(7)
     options.url = host + qry;
     //let url = host + qry;
-    //console.log(url)
+    console.log(options)
 
     request(options, function (error, response, body) {
         res.statusCode = response.statusCode;
         res.setHeader('Content-Type', 'application/fhir+json')
         res.setHeader('Access-Control-Allow-Origin',"*");
 
+        res.setHeader('Access-Control-Allow-Headers', 'content-type');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+
+
+//console.log(res.heade)
         res.send(body)
     });
 }
