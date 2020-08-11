@@ -12,7 +12,7 @@ const https = require('https');
 const app = express();
 const fs = require('fs');
 
-let request = require('request');
+//let request = require('request');
 
 
 try {
@@ -46,7 +46,7 @@ app.use('/', express.static(__dirname,{index:'/survey.html'}));
 
 
 //--- ssl proxy
-
+/*
 app.get('/proxy/:query',function(req,res) {
     let host = "http://home.clinfhir.com:8054/baseR4/";
     let qry = req.url.substr(7)
@@ -69,9 +69,13 @@ app.get('/proxy/:query',function(req,res) {
 
 
 })
+*/
 
+//module to proxy requests to a fixed server (to support ssl)
+let proxyModule = require("./serverModuleProxy.js");
+proxyModule.setup(app);
 
-let surveyModule = require("./serverModuleSurvey.js")
+let surveyModule = require("./serverModuleSurvey.js");
 const dbName = "survey";
 var MongoClient = require('mongodb').MongoClient;
 MongoClient.connect('mongodb://127.0.0.1:27017', {useUnifiedTopology: true},function(err, client) {
