@@ -8,7 +8,7 @@
 const express = require('express')
 const http = require('http');
 const https = require('https');
-
+const cors = require('cors')
 const app = express();
 const fs = require('fs');
 
@@ -40,6 +40,8 @@ try {
     console.log('server listening on port ' + port)
 
 }
+
+app.use(cors())
 
 app.use('/', express.static(__dirname,{index:'/survey.html'}));
 

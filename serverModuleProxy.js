@@ -4,6 +4,8 @@ const  host = "http://home.clinfhir.com:8054/baseR4/";
 
 function setup(app) {
 
+    //app.options
+
     app.get('/proxy/*',function(req,res) {
         executeQuery(req.url,res)
     });
