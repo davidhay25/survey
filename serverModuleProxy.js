@@ -7,7 +7,7 @@ function setup(app) {
 
     //app.options
 
-    app.options('/proxy/*', cors())
+    app.options('/proxy/*', cors({origin:'*'}));
 
     app.get('/proxy/*',function(req,res) {
         executeQuery(req.url,res)

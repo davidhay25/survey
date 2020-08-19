@@ -41,8 +41,8 @@ try {
 
 }
 
-app.use(cors({methods:'GET , PUT , POST , PATCH'}))
-app.options('*', cors())
+//app.use(cors({methods:'GET , PUT , POST , PATCH'}))
+//app.options('*', cors())
 
 app.use('/', express.static(__dirname,{index:'/survey.html'}));
 

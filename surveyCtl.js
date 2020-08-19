@@ -3,7 +3,8 @@ angular.module("sampleApp")
     .controller('surveyCtrl',
         function ($scope,$http,modalService) {
             $scope.input = {deployType:{}, notes:{}}
-            $scope.input.fhirVersion = "R4"
+
+
             $scope.lst = []
 
             $http.get('./allResources.json').then(
@@ -16,10 +17,29 @@ angular.module("sampleApp")
                         } else {
                             return -1;
                         }
-                    })
+                    });
+
+                    $scope.fullResourceList = $scope.allResources.slice();
                     $scope.setFilter("")
+                    $scope.input.fhirVersion = "R4"
+                    makeAllResourceList("R4")
                 }
             );
+
+
+            function makeAllResourceList(version) {
+                $scope.allResources.length = 0;
+                $scope.fullResourceList.forEach(function (item) {
+                    if (item.version.indexOf(version)> -1) {
+                        $scope.allResources.push(item)
+                    }
+                });
+
+                $scope.lst = $scope.allResources.slice();       //update the display
+                $scope.input.selectedOnly = false;
+                $scope.setFilter($scope.input.filter)           //show the filter
+            }
+
 
             function loadSurveyResults(){
                 $http.get('survey/results').then(
@@ -33,6 +53,17 @@ angular.module("sampleApp")
                 );
             }
             loadSurveyResults()
+
+            $scope.$watch(function(scope) { return scope.input.fhirVersion },
+                function(newValue) {
+
+                    console.log(newValue)
+                    if (newValue) {
+                        makeAllResourceList(newValue)
+                    }
+
+                }
+            );
 
             $scope.selectedOnly = function(so) {
                 console.log(so)
