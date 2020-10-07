@@ -4,6 +4,7 @@ angular.module("sampleApp")
         function ($scope,$http,modalService) {
             $scope.input = {deployType:{}, notes:{}}
 
+            $scope.input.component = "{resourceType:Observation}"
 
             $scope.lst = []
 
@@ -110,11 +111,12 @@ angular.module("sampleApp")
                     closeButtonText: "No, I'm not finished",
                     actionButtonText: 'Yes, all finished',
                     headerText: 'Save survey',
-                    bodyText: "Are you sure you're ready to save the survey ?"
+                    bodyText: "Are you sure you're ready to save the survey? It can be repeated any number of times for different products or FHIR versions"
                 };
 
                 modalService.showModal({}, modalOptions).then(function () {
                     let result = {name:$scope.input.name,contact : $scope.input.contact,resources:[]}
+                    result.product = $scope.input.product;
                     result.fhirVersion = $scope.input.fhirVersion;
                     $scope.allResources.forEach(function (item) {
                         var name = item.name;

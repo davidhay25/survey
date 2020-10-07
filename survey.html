@@ -38,6 +38,9 @@
 
     <script src="surveyCtl.js"></script>
     <script src="modalDialogSvc.js"></script>
+
+    <script src='node_modules/cf-show-resource/dist/cf-show-resource.js'></script>
+
 </head>
 <body style="padding: 8px;padding-top: 80px">
 
@@ -52,10 +55,37 @@
         <div class="col-md-1 col-sm-1">
             <div class="navbar-text">
 
+                <button class="btn btn-link" ng-click = "showHelp = ! showHelp">
+                    <i  class="glyphicon glyphicon-question-sign"></i>
+                </button>
+
             </div>
 
         </div>
+
     </nav>
+
+
+    <div ng-show="showHelp" class="rounded-box">
+        <p>This survey has been designed to collect real-world usage information about FHIR to assist HL7 in determining the
+            <a href="http://hl7.org/fhir/versions.html#maturity" target="_blank">maturity level</a>
+        for individual resources.</p>
+
+        <p>It can be completed any number times for each product and / or FHIR version that is being used by your application</p>
+
+        <div>To submit a result:
+            <ul>
+                <li>Enter your name, email, software product and FHIR version. All fields are optional, but we'd appreciate as much info as possible.
+                If you're OK to be contacted by the HL7 committee responsible for each resource then include an email address. If it's empty
+                we'll assume that you don't want to be contacted.</li>
+                <li>Select each resource you've used, indicate whether it is being used in a test or production environment and any pertinant notes</li>
+                <li>When you've selected all the resources, click the submit button to send the results to the server.</li>
+
+    </ul>
+        </div>
+
+    </div>
+
 
     <uib-tabset>
         <uib-tab heading="Survey">
@@ -64,11 +94,14 @@
 
             <div class="rounded-box-filled">
                 <div class="row">
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <input type="text" class="form-control" ng-model="input.name" placeholder="My Name"/>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <input type="text" class="form-control" ng-model="input.contact" placeholder="Email (supply if OK to contact you)"/>
+                    </div>
+                    <div class="col-md-2">
+                        <input type="text" class="form-control" ng-model="input.product" placeholder="Software product"/>
                     </div>
                     <div class="col-md-2">
 
