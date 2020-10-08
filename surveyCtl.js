@@ -4,14 +4,14 @@ angular.module("sampleApp")
         function ($scope,$http,modalService) {
             $scope.input = {deployType:{}, notes:{}}
 
-            $scope.input.component = "{resourceType:Observation}"
+           // $scope.input.component = "{resourceType:Observation}"
 
             $scope.lst = []
 
             $http.get('./allResources.json').then(
                 function(data) {
                     //console.log(data.data);
-                    $scope.allResources = data.data
+                    $scope.allResources = data.data;
                     $scope.allResources.sort(function(a,b) {
                         if (a.name > b.name) {
                             return 1
@@ -22,23 +22,82 @@ angular.module("sampleApp")
 
                     $scope.fullResourceList = $scope.allResources.slice();
                     $scope.setFilter("")
-                    $scope.input.fhirVersion = "R4"
-                    makeAllResourceList("R4")
+                    $scope.input.fhirVersion4 = true
+                    makeAllResourceList()
                 }
             );
 
 
-            function makeAllResourceList(version) {
-                $scope.allResources.length = 0;
-                $scope.fullResourceList.forEach(function (item) {
-                    if (item.version.indexOf(version)> -1) {
-                        $scope.allResources.push(item)
-                    }
-                });
+            $scope.checkProduct = function(product){
+                let url = "/survey/product/" + product
+                $http.get(url).then(
+                    function (data) {
+                        console.log(data)
+                        $scope.previous = data.data;
 
-                $scope.lst = $scope.allResources.slice();       //update the display
-                $scope.input.selectedOnly = false;
-                $scope.setFilter($scope.input.filter)           //show the filter
+                    }, function (err) {
+                        //console.log(err)
+                        //alert('Unable to contact survey server')
+                    }
+                );
+            }
+
+            $scope.selectPreviousItem = function(item) {
+                $scope.currentItem = item;
+
+                console.log(item)
+            }
+
+            $scope.deletePreviousItem = function(item){
+                var modalOptions = {
+                    closeButtonText: "No, I've changed my mind'",
+                    actionButtonText: 'Yep, sure do',
+                    headerText: 'Delete previous survey',
+                    bodyText: "Are you sure you want to remove this survey?"
+                };
+
+                modalService.showModal({}, modalOptions).then(function () {
+
+                    let url = "/survey/" + item._id
+                    $http.delete(url).then(
+                        function(data) {
+                            alert('survey has been removed')
+                            $scope.checkProduct(item.product)
+                        }, function (err) {
+                            alert('Sorry, there was an error removing this surver. Please post a message in the clinFHIR zulip stream')
+                        }
+                    )
+                })
+            }
+
+            function makeAllResourceList(triggerVersion) {
+
+                if ( $scope.allResources) {
+                    $scope.allResources.length = 0;
+                }
+
+
+                if ($scope.fullResourceList) {
+                    $scope.fullResourceList.forEach(function (item) {
+
+                        let include = false;
+                        if ($scope.input.fhirVersion2 && item.version.indexOf('R2') > -1) {include = true}
+                        if ($scope.input.fhirVersion3 && item.version.indexOf('R3') > -1) {include = true}
+                        if ($scope.input.fhirVersion4 && item.version.indexOf('R4') > -1) {include = true}
+                        //if (item.version.indexOf(version)> -1) {
+                        // $scope.allResources.push(item)
+                        //}
+
+                        if (include) {
+                            $scope.allResources.push(item)
+                        }
+                    });
+
+                    $scope.lst = $scope.allResources.slice();       //update the display
+                    $scope.input.selectedOnly = false;
+                    $scope.setFilter($scope.input.filter)           //show the filter
+                }
+
             }
 
 
@@ -55,19 +114,24 @@ angular.module("sampleApp")
             }
             loadSurveyResults()
 
-            $scope.$watch(function(scope) { return scope.input.fhirVersion },
+            $scope.$watch(function(scope) { return scope.input.fhirVersion2 },
                 function(newValue) {
-
-                    console.log(newValue)
-                    if (newValue) {
-                        makeAllResourceList(newValue)
-                    }
-
+                    makeAllResourceList('R2')
+                }
+            );
+            $scope.$watch(function(scope) { return scope.input.fhirVersion3 },
+                function(newValue) {
+                    makeAllResourceList('R3')
+                }
+            );
+            $scope.$watch(function(scope) { return scope.input.fhirVersion4 },
+                function(newValue) {
+                    makeAllResourceList('R4')
                 }
             );
 
             $scope.selectedOnly = function(so) {
-                console.log(so)
+                //console.log(so)
                 if (so) {
                     $scope.lst.length = 0;
                     $scope.allResources.forEach(function (item) {
@@ -111,13 +175,42 @@ angular.module("sampleApp")
                     closeButtonText: "No, I'm not finished",
                     actionButtonText: 'Yes, all finished',
                     headerText: 'Save survey',
-                    bodyText: "Are you sure you're ready to save the survey? It can be repeated any number of times for different products or FHIR versions"
+                    bodyText: "Are you sure you're ready to save the survey? It can be repeated any number of times for different products."
                 };
 
+                if ($scope.input.contact) {
+                    //modalOptions.bodyText "Thanks for supplying your email. " +
+                } else {
+
+                }
+
+
                 modalService.showModal({}, modalOptions).then(function () {
-                    let result = {name:$scope.input.name,contact : $scope.input.contact,resources:[]}
+                    let result = {name:$scope.input.name,contact : $scope.input.contact,resources:[]};
+
+
+                    result.date = new Date().toLocaleDateString(
+                        'en-gb',
+                        {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        }
+                    )
+
+                    //result.date = new Date().toString()
+/*
+                    var today = new Date();
+                    var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+                    var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+                    result.date  = date+' '+time;
+*/
+
+                    //result.date = new Date().toISOString();
                     result.product = $scope.input.product;
-                    result.fhirVersion = $scope.input.fhirVersion;
+                    result.fhirVersion2 = $scope.input.fhirVersion2;
+                    result.fhirVersion3 = $scope.input.fhirVersion3;
+                    result.fhirVersion4 = $scope.input.fhirVersion4;
                     $scope.allResources.forEach(function (item) {
                         var name = item.name;
                         if ($scope.input.selected[name]) {
@@ -155,7 +248,7 @@ angular.module("sampleApp")
 
                 }
 
-            }
+            };
 
 
         $scope.canShowDEP = function (row) {

@@ -10,6 +10,7 @@
 
 
 
+
     <link rel="stylesheet" type="text/css" href="bootstrap.min.css"/>
     <link rel="stylesheet" type="text/css" href="main.css"/>
 
@@ -19,6 +20,14 @@
         .myScroll {
             height: 800px;
             overflow-y: scroll;
+        }
+
+        .required {
+            background-color: #FFE2E2;
+        }
+
+        .selected {
+            background-color: lightgrey;
         }
     </style>
 
@@ -75,13 +84,15 @@
 
         <div>To submit a result:
             <ul>
-                <li>Enter your name, email, software product and FHIR version. All fields are optional, but we'd appreciate as much info as possible.
+                <li>Enter your name, email, software product and FHIR version/s (multiple are allowed).
+                    All fields other than product are optional, but we'd appreciate as much info as possible.
                 If you're OK to be contacted by the HL7 committee responsible for each resource then include an email address. If it's empty
                 we'll assume that you don't want to be contacted.</li>
                 <li>Select each resource you've used, indicate whether it is being used in a test or production environment and any pertinant notes</li>
-                <li>When you've selected all the resources, click the submit button to send the results to the server.</li>
+                <li>When you've selected all the resources, click the submit button to send the results to the server. Note that
+                the submit button will only show if there is a product entered.</li>
 
-    </ul>
+            </ul>
         </div>
 
     </div>
@@ -90,46 +101,61 @@
     <uib-tabset>
         <uib-tab heading="Survey">
 
-
-
             <div class="rounded-box-filled">
                 <div class="row">
+                    <div class="col-md-2">
+                        <input type="text"
+                               class="form-control required" ng-model="input.product"
+                               ng-blur = "checkProduct(input.product)"
+                               placeholder="Software product"/>
+                    </div>
                     <div class="col-md-2">
                         <input type="text" class="form-control" ng-model="input.name" placeholder="My Name"/>
                     </div>
                     <div class="col-md-2">
                         <input type="text" class="form-control" ng-model="input.contact" placeholder="Email (supply if OK to contact you)"/>
                     </div>
-                    <div class="col-md-2">
-                        <input type="text" class="form-control" ng-model="input.product" placeholder="Software product"/>
-                    </div>
+
                     <div class="col-md-2">
 
                         <div class="btn-group">
-                            <label class="btn btn-default" ng-model="input.fhirVersion" uib-btn-radio="'R4'">R4</label>
-                            <label class="btn btn-default" ng-model="input.fhirVersion" uib-btn-radio="'R3'">STU 3</label>
-                            <label class="btn btn-default" ng-model="input.fhirVersion" uib-btn-radio="'R2'">DSTU 2</label>
+                            <label class="btn btn-default" ng-model="input.fhirVersion2" uib-btn-checkbox="'R2'">DSTU 2</label>
+                            <label class="btn btn-default" ng-model="input.fhirVersion3" uib-btn-checkbox="'R3'">STU 3</label>
+                            <label class="btn btn-default" ng-model="input.fhirVersion4" uib-btn-checkbox="'R4'">R4</label>
                         </div>
-
-
-
                     </div>
 
                     <div class="col-md-3">
+                        <!--
                         <checkbox ng-model="input.selectedOnly"
                                   style="margin-top: 8px"
                                   ng-click="selectedOnly(! input.selectedOnly)"></checkbox>
                         <span style="margin-top: 12px">Only show selected resource types</span>
+                        -->
                     </div>
                     <div class="col-md-1">
-                        <button class="btn btn-primary pull-right" ng-click="submit()">Submit</button>
+                        <button ng-show="input.product" class="btn btn-primary pull-right" ng-click="submit()">Submit</button>
                     </div>
                 </div>
 
             </div>
+<!--
+            <div class="rounded-box-filled">
+                <div class="row">
+                    <div class="col-md-2">
+                        Filter by resource type
+                    </div>
+                    <div class="col-md-2">
+                        <input type="text" class="form-control" ng-model="input.filter"
+                               ng-change="setFilter(input.filter)"
+                               placeholder="Filter text"/>
+                    </div>
+                </div>
+            </div>
+
 
             <br/>
-
+-->
             <div class="row">
                 <div class="col-md=3">
                     <div class="myScroll">
@@ -143,9 +169,26 @@
 
                         <tr>
                             <td>
-                                <input type="text" class="form-control" ng-model="input.filter"
-                                       ng-change="setFilter(input.filter)"
-                                       placeholder="Filter text"/>
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <checkbox ng-model="input.selectedOnly"
+
+                                                  uib-popover = "Show only selected resource types"
+                                                  popover-placement="right"
+                                                  popover-trigger="'mouseenter'"
+
+                                                  style="margin-top: 8px"
+                                                  ng-click="selectedOnly(! input.selectedOnly)"></checkbox>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <input type="text" class="form-control" ng-model="input.filter"
+                                               ng-change="setFilter(input.filter)"
+                                               placeholder="Filter text"/>
+                                    </div>
+                                </div>
+
+
+
                             </td>
                         </tr>
                         <tr ng-repeat = "row in lst" >
@@ -202,6 +245,34 @@
             </div>
 
         </uib-tab>
+        <uib-tab heading="Previous surveys" ng-show="previous.length > 0">
+            <h3>Previous surveys for this product</h3>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="list-group">
+                        <div ng-repeat = "item in previous"
+                             ng-class="{'list-group-item':true, 'selected':item._id == currentItem._id}"
+                             style="cursor: pointer"
+                             ng-click="selectPreviousItem(item)">
+                            {{item.date}}
+                            <span class="pull-right clickable" ng-click="deletePreviousItem(item)">Delete</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-9">
+                    <table class="table table-bordered">
+                        <tr ng-repeat="resource in currentItem.resources">
+                            <td>
+                                {{resource.name}}
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+            </div>
+
+        </uib-tab>
         <uib-tab heading="Results so far...">
 
             <div class="rounded-box-filled">
@@ -218,6 +289,9 @@
                     <div class="col-md-3">
                         <div class="pull-right">
                             <checkbox ng-model="input.showNotes"
+                                      uib-popover = "Show only selected"
+                                      popover-placement="top"
+                                      popover-trigger="'mouseenter'"
                                       ng-click="showNotes(! input.showNotes)"></checkbox>
                             Show Notes
                         </div>
@@ -228,10 +302,11 @@
             </div>
 
             <table class="table table-bordered">
-                <tr><th width="20%">Resource type</th><th>Number of Responses</th><th>Dev/Test deployments</th><th>Production deployments</th><th>Notes</th></tr>
+                <tr><th width="20%">Resource type</th><th>Number of Responses </th><th>Number contactable</th><th>Dev/Test deployments</th><th>Production deployments</th><th>Notes</th></tr>
                 <tr ng-repeat="res in results">
                     <td>{{res.type}}</td>
-                    <td>{{res.count}}</td>
+                    <td>{{res.count}}  </td>
+                    <td>{{res.contactable}}</td>
                     <td>{{res.dev}}</td>
                     <td>{{res.prod}}</td>
                     <td>
