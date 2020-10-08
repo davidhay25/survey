@@ -227,6 +227,7 @@ angular.module("sampleApp")
                         function (data) {
                             loadSurveyResults()
                             alert('Survey has been saved. Thanks for responding')
+                            $scope.checkProduct($scope.input.product)
                         }, function (err) {
                             console.log(err)
                             alert('Sorry, there was an error saving the survey. Can you please raise an issue on the clinFHIR stream of the FHIR chat?')

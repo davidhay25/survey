@@ -245,8 +245,12 @@
             </div>
 
         </uib-tab>
-        <uib-tab heading="Previous surveys" ng-show="previous.length > 0">
-            <h3>Previous surveys for this product</h3>
+        <uib-tab  ng-show="previous.length > 0">
+
+            <uib-tab-heading>
+                Previous surveys <span class="badge">{{previous.length}}</span>
+            </uib-tab-heading>
+            <h3>Previous surveys for this product: {{input.product}}</h3>
 
             <div class="row">
                 <div class="col-md-3">

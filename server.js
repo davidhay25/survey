@@ -41,38 +41,8 @@ try {
 
 }
 
-//app.use(cors({methods:'GET , PUT , POST , PATCH'}))
-//app.options('*', cors())
 
 app.use('/', express.static(__dirname,{index:'/survey.html'}));
-
-
-
-//--- ssl proxy
-/*
-app.get('/proxy/:query',function(req,res) {
-    let host = "http://home.clinfhir.com:8054/baseR4/";
-    let qry = req.url.substr(7)
-
-    let url = host + qry
-    console.log(url)
-
-
-    request(url, function (error, response, body) {
-
-        res.statusCode = response.statusCode;
-        res.setHeader('Content-Type', 'application/fhir+json')
-        res.setHeader('Access-Control-Allow-Origin',"*");
-
-        res.send(body)
-
-
-    });
-
-
-
-})
-*/
 
 //module to proxy requests to a fixed server (to support ssl)
 let proxyModule = require("./serverModuleProxy.js");
@@ -96,7 +66,12 @@ MongoClient.connect('mongodb://127.0.0.1:27017', {useUnifiedTopology: true},func
     }
 });
 
-console.log('xx')
+//redirect for http
+//let http = require('http');
+http.createServer(function (req, res) {
+    res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
+    res.end();
+}).listen(80);
 
 
 
@@ -105,18 +80,3 @@ console.log('xx')
 
 
 
-
-/*
-
-//enable SSL - https://aghassi.github.io/ssl-using-express-4/
-const https = require('https');
-const sslOptions = {
-    key: fs.readFileSync('./keys/key.pem'),
-    cert: fs.readFileSync('./keys/cert.pem'),
-    passphrase:'ne11ieh@y'
-};
-
-https.createServer(sslOptions, app).listen(8443)
-console.log('server listening via TLS on port 8443');
-
-*/
