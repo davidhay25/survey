@@ -1,10 +1,10 @@
 
 angular.module("sampleApp")
     .controller('surveyCtrl',
-        function ($scope,$http,modalService) {
+        function ($scope,$http,modalService,$localStorage) {
             $scope.input = {deployType:{}, notes:{}}
 
-           // $scope.input.component = "{resourceType:Observation}"
+
 
             $scope.lst = []
 
@@ -27,6 +27,7 @@ angular.module("sampleApp")
                 }
             );
 
+            $scope.surveyId = $localStorage.surveyId;
 
             $scope.checkProduct = function(product){
                 let url = "/survey/product/" + product
@@ -104,7 +105,17 @@ angular.module("sampleApp")
             function loadSurveyResults(){
                 $http.get('survey/results').then(
                     function (data) {
+
+
+                        //console.log(data.data)
                         $scope.results = data.data;
+                        $scope.results.sort(function (a,b) {
+                            if (a.type > b.type) {
+                                return 1
+                            } else {
+                                return -1
+                            }
+                        })
 
                     }, function (err) {
                         console.log(err)
@@ -225,8 +236,13 @@ angular.module("sampleApp")
 
                     $http.post('/survey',result).then(
                         function (data) {
+                            console.log(data)
+
+                            $localStorage.surveyId = $localStorage.surveyId || []
+                            $localStorage.surveyId.push(data.data.id);
+                            $scope.surveyId = $localStorage.surveyId;
                             loadSurveyResults()
-                            alert('Survey has been saved. Thanks for responding')
+                            alert('Survey has been saved. Thanks for responding');
                             $scope.checkProduct($scope.input.product)
                         }, function (err) {
                             console.log(err)

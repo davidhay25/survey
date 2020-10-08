@@ -51,7 +51,6 @@ function setup(app,db) {
                            summary[type].contactable ++;
                        }
                     })
-
                 });
 
                 //convert to array as easier for client
@@ -123,19 +122,24 @@ console.log(name)
 
                 db.collection("survey").insert(jsonBody, function (err, result) {
                     if (err) {
-                        console.log('Error inserrting survey result ')
+                        console.log('Error inserting survey result ')
                         res.status(500);
                         res.json({err:err});
                     } else {
-                        res.end();
+                        console.log(result.insertedIds[0])
+                        res.json({id:result.insertedIds[0]});
                     }
                 });
 
 
-            } catch (ex) {}
+            } catch (ex) {
+                res.status(500);
+                res.json({err:ex});
+
+            }
 
 
-            res.end();
+            //res.end();
         });
 
     });

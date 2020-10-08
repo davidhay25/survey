@@ -7,8 +7,7 @@
     <script src="ui-bootstrap-tpls-2.0.1.min.js"></script>
     <script src="moment.min.js"></script>
     <script src="angular-bootstrap-checkbox.js"></script>
-
-
+    <script src="ngStorage.min.js"></script>
 
 
     <link rel="stylesheet" type="text/css" href="bootstrap.min.css"/>
@@ -33,7 +32,7 @@
 
     <script>
 
-        angular.module("sampleApp",['ui.bootstrap','ui.checkbox']).config(function($locationProvider) {
+        angular.module("sampleApp",['ui.bootstrap','ui.checkbox','ngStorage']).config(function($locationProvider) {
 
             // enable html5Mode for pushstate ('#'-less URLs)
             $locationProvider.html5Mode(true);
@@ -260,7 +259,9 @@
                              style="cursor: pointer"
                              ng-click="selectPreviousItem(item)">
                             {{item.date}}
-                            <span class="pull-right clickable" ng-click="deletePreviousItem(item)">Delete</span>
+                            <span
+                                    ng-show="surveyId.indexOf(item['_id']) > -1"
+                                    class="pull-right clickable" ng-click="deletePreviousItem(item)">Delete</span>
                         </div>
                     </div>
                 </div>
