@@ -143,6 +143,7 @@ angular.module("sampleApp")
 
             $scope.selectedOnly = function(so) {
                 //console.log(so)
+                $scope.input.filter = ""
                 if (so) {
                     $scope.lst.length = 0;
                     $scope.allResources.forEach(function (item) {
@@ -155,10 +156,10 @@ angular.module("sampleApp")
                     $scope.setFilter($scope.input.filter)
                 }
 
-
             };
 
             $scope.setFilter = function(filter) {
+                delete $scope.input.selectedOnly;
                 if (filter !== "" && filter !== undefined) {
                     filter = filter.toLowerCase()
 
