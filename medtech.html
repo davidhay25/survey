@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <script src="angular.min1-5.js"></script>
+    <script src="ui-bootstrap-tpls-2.0.1.min.js"></script>
+    <script src="moment.min.js"></script>
+    <script src="angular-bootstrap-checkbox.js"></script>
+    <script src="ngStorage.min.js"></script>
+
+
+    <link rel="stylesheet" type="text/css" href="bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="main.css"/>
+
+    <title>Medtech</title>
+
+    <style>
+        .myScroll {
+            height: 800px;
+            overflow-y: scroll;
+        }
+
+        .required {
+            background-color: #FFE2E2;
+        }
+
+        .selected {
+            background-color: lightgrey;
+        }
+    </style>
+
+    <script>
+
+
+//https://www.c-sharpcorner.com/UploadFile/dev4634/understanding-http-interceptors-in-angular-js/
+        var Interceptor = function ($q)
+        {
+            return {
+                request: function (config)
+                {
+                    console.log('request intercept')
+                    return config;
+                },
+                requestError: function (rejection)
+                {
+                    return $q.reject(rejection);
+                },
+                response: function (result)
+                {
+                    return result;
+                },
+                responseError: function (response)
+                {
+                    return $q.reject(response);
+                }
+            }
+        }
+
+
+        angular.module("sampleApp",['ui.bootstrap','ui.checkbox','ngStorage']).config(function($locationProvider,$httpProvider) {
+
+            // enable html5Mode for pushstate ('#'-less URLs)
+            $locationProvider.html5Mode(true);
+            $locationProvider.hashPrefix('!');
+
+            //$httpProvider.interceptors.push(Interceptor);
+        });
+
+        angular.module("sampleApp").constant("moment", moment);
+
+    </script>
+
+
+    <script src="medtechCtl.js"></script>
+    <script src="modalDialogSvc.js"></script>
+
+    <script src='node_modules/cf-show-resource/dist/cf-show-resource.js'></script>
+
+</head>
+<body style="padding: 8px;padding-top: 80px">
+
+
+<div ng-app="sampleApp" ng-controller="surveyCtrl" class="container-fluid" ng-cloak>
+
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="col-md-11 col-sm-11">
+            <a class="navbar-brand" href="#">medtech API tester</a>
+        </div>
+
+        <div class="col-md-1 col-sm-1">
+            <div class="navbar-text">
+
+                <button class="btn btn-link" ng-click = "showHelp = ! showHelp">
+                    <i  class="glyphicon glyphicon-question-sign"></i>
+                </button>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+    <div class="row">
+        <div class="col-md-2">
+            <div class="list-group">
+                <div class="list-group-item" ng-repeat="call in calls"
+                    ng-click="makeCall(call)">
+                    {{call.display}}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-10">
+            <div class="banner">
+                {{currentCall.url}}
+            </div>
+            <pre>{{result | json}}</pre>
+        </div>
+    </div>
+
+
+    <button class="btn btn-primary" ng-click="getToken()">Get Access token</button>
+<br/>
+    <button class="btn btn-primary" ng-click="test()">Test</button>
+
+
+</div>
+</body>
+</html>

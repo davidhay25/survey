@@ -1,0 +1,12 @@
+[
+  {"display": "Patient by identifier",
+    "url" : "Patient?identifier=https://standards.digital.health.nz/ns/nhi-id|AAA7777"},
+
+  {"display": "Conditions by patient identifier",
+    "url" : "Condition?patient.identifier=https://standards.digital.health.nz/ns/nhi-id|AAA7777"},
+  {
+    "display": "Long term conditions only",
+    "url" : "Condition?patient.identifier=https://standards.digital.health.nz/ns/nhi-id|AAA7777&long-term-condition=true"
+  }
+
+]
